@@ -1,9 +1,12 @@
 /******************************************************************************
  *  (Start of) Implementation of a neural net in scala, in a functional style.
  *
- *  
- *
- *
+ *  Things I'd like to look at/understand:
+ *	- Implementing power series with streams
+ *	- Whether there's a better way of computing the gradient
+ *	- Implementing a stream of training data until convergence
+ * 	- Using affine rep [A|b]x\oplus 1 instead of afifne-linear Ax + b
+ *	- Whether there's a better way to structure the backpropagation
  *
  *****************************************************************************/
 
@@ -78,7 +81,7 @@ object MathRoutines {
 object NeuralRoutines{
 	
 	def activate_layer(l: Matrix, i: Point): Point = {
-		LinAlgRoutines.matrixVectorMultiply(l,i).map(x => MathRoutines.sigmoid(x))
+		LinAlgRoutines.matrixVectorMultiply(l,i).map(x => MathRoutines.sigmoid(x)):+1
 	}
 	
 	def feed_forward(neural_net: List[Matrix], input: Point): Point 
@@ -88,10 +91,11 @@ object NeuralRoutines{
 		case (_, input) => feed_forward(neural_net.tail, activate_layer(neural_net.head, input))
 	}
 
-	def back_propagate(neural_net: List[Matrix], error: Point): 
-		List[Matrix] = (net, error) match
+	/* return the gradient of the weights */
+	def back_propagate(neural_net: List[Matrix], input: Point, true: Point): 
+		List[Matrix] = (net, inp, error) match
 	{
-		case (0,0) => println("I'm not sure how to implement -- keep track of hidden layer outputs or not?")
+		
 	}
 	
 }
@@ -108,6 +112,7 @@ object GenerateData{
 		case 1 => Array(0, 1, 0, 
 										0, 1, 0, 
 										0, 1, 0, 
+										0, 1, 0,
 										0, 1, 0)
 
 		case 2 => Array(1, 1, 1,
